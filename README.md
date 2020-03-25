@@ -6,11 +6,11 @@
 
 Le but de ce composant est de rajouter des contrôles de validité des fichiers changelogs.
 
-Généralement (et c'est une bonne pratique) on valide les fichiers changelogs Liquibase avec une base de test : H2, HSQLDB ou Derby mais malgré les modes de compatibilité vers les systèmes cibles, tels que Oracle ou MySQL il reste encore des règles internes aux systèmes cibles qui ne sont pas détectées.
+Généralement (et c'est une bonne pratique) on valide les fichiers changelogs Liquibase avec une base de test : H2, HSQLDB ou Derby mais malgré les modes de compatibilité vers les systèmes cibles, tels qu'Oracle ou MySQL il reste encore des règles internes aux systèmes cibles qui ne sont pas détectées.
 
-Le but de ce composant est de pouvoir en détecter le plus possibles.
+Le but de ce composant est de pouvoir en détecter le plus possible.
 
-:information_source: **Le cas d'usage typique est via l'intégration continue pour détecter les problèmes au plus tôt sans attendre un déploiement sur un environnement cible.**
+:information_source: **Le cas d'usage typique est via l'intégration continue pour détecter les problèmes au plus tôt (donc des gains de temps) sans attendre un déploiement sur un environnement cible.**
 
 ## Rappel : les modes de compatibilités
 
@@ -20,9 +20,11 @@ Le but de ce composant est de pouvoir en détecter le plus possibles.
 
 ## Principes d'extension de Liquibase
 
+:link: [Liquibase Extensions - Overview](https://liquibase.jira.com/wiki/spaces/CONTRIB/pages/2424879/Overview)
+
 ### Généralités
 
-Ces principes d'extentions de l'API _Liquibase_ sont décrits ici : <https://liquibase.jira.com/wiki/spaces/CONTRIB/pages/1998869/Extension+Points> :
+Ces principes d'extensions de l'API _Liquibase_ sont décrits ici : <https://liquibase.jira.com/wiki/spaces/CONTRIB/pages/1998869/Extension+Points> :
 
 > If you want to extend Liquibase to add new change types, alter the behavior of existing change types, or add support for new databases, these are the interfaces you need to know about.
 
@@ -34,7 +36,7 @@ Différents points d'accroches y sont décrits :
   * _liquibase.change.Change implementations are the objects created from database change log files_
   * **Non adapté pour rajouter des contrôles**
 * ChangeLogParser
-  * _iquibase.parser.ChangeLogParser implementations allow you to read database changelog files written in different formats._
+  * _liquibase.parser.ChangeLogParser implementations allow you to read database changelog files written in different formats._
   * **Non adapté pour rajouter des contrôles**
 * ChangeLogSerializer
   * _liquibase.serializer.ChangeLogSerializer implementation are used by the generateChangeLog command and other functions that need to convert a DatabaseChangeLog object into a state that can be saved to disk_
@@ -43,15 +45,15 @@ Différents points d'accroches y sont décrits :
   * _liquibase.database.Database implementations are the facade Liquibase uses to access the database_
   * **Non adapté au besoin**
 * Precondition
-  *liquibase.precondition.Precondition implementations allow you to run validation and checks against your database before running a changelog as a whole_
+  * _liquibase.precondition.Precondition implementations allow you to run validation and checks against your database before running a changelog as a whole_
   * **Non adapté au besoin, le but n'est pas de rajouter de pré conditions dans un changelog mais de rajouter des contrôles au _runtime_**
 * SqlGenerator
   * _liquibase.sqlgenerator.SqlGenerator implementations convert database-independent SqlStatement classes into database-specific SQL._
   * Propose 2 méthodes intéressantes :
     * `public ValidationErrors validate(StatementType statement, Database database, SqlGeneratorChain sqlGeneratorChain);`
     * `public Warnings warn(SqlStatement sqlStatement, Database database, SqlGeneratorChain sqlGeneratorChain);`
-  * **Solution retenue**
-  
+  * **C'est la solution retenue**
+
 ### Limites de l'extension via SqlGenerator
 
 :link: <https://liquibase.jira.com/wiki/spaces/CONTRIB/pages/1998878/SqlGenerator>
@@ -65,8 +67,8 @@ Ce qui implique les contraintes suivantes :
 
 * Impossible d'obtenir des informations sur le changeset contenant le changement.
 * Impossible de récupérer les éventuels _changelog parameters_.
-* Dans le cas de H2 impossible de récupérer via l'URL de connexion le mode de comptibilité s'il est précisé.
-* Il n'y a aucune notion d'héritage entre les différents _SlqStatement_ ils héritent tous de `AbstractSqlStatement` (qui ne apporte pas grand chose). Il faut donc abuser de l'opérateur `instanceof`.
+* Dans le cas de H2 impossible de récupérer via l'URL de connexion le mode de compatibilité s'il est précisé.
+* Il n'y a aucune notion d'héritage entre les différents _SlqStatement_ ils héritent tous de `AbstractSqlStatement` (qui ne nous apporte pas grand chose). Il faut donc abuser de l'opérateur `instanceof` du style `if (sqlStatement instanceof CreateTableStatement)`.
 
 ## Contrôles pris en charge par DBMS cible
 
@@ -74,7 +76,7 @@ Ce qui implique les contraintes suivantes :
 
 #### ORA-00972: identifier is too long
 
-But de la règle : 
+But de la règle :
 
 > Veillez à ce que les noms d'objets Oracle comportent au maximum 30 caractères.
 
@@ -87,7 +89,7 @@ Références :
 
 #### Identifier name is too long
 
-But de la règle : 
+But de la règle :
 
 > Veillez à ce que les noms d'objets MySQL comportent au maximum 64 caractères.
 
@@ -97,4 +99,48 @@ Références :
 
 ## Exemple d'utilisation
 
-TODO
+### Etape 1 : Ajouter l'extension au classpath
+
+* Pour Maven ajouter la dépendance `com.github.lebezout:liquibase-ext-dbms-checker:1.0.0`
+* Pour la ligne de commande ajouter `liquibase-ext-dbms-checker.jar`
+
+### Etape 2 : Activer les contrôles de syntaxe
+
+Pour une cible Oracle :
+
+* Pour un test JUnit : `System.setProperty("liquibase.ext.OracleSyntaxChecker.enable", "true");`
+* Pour Maven via les properties : `<liquibase.ext.OracleSyntaxChecker.enable>true</liquibase.ext.OracleSyntaxChecker.enable>`
+* Pour la ligne de commande : `-Dliquibase.ext.OracleSyntaxChecker.enable=true`
+
+Pour une cible MySQL :
+
+* Pour un test JUnit : `System.setProperty("liquibase.ext.MySQLSyntaxChecker.enable", "true");`
+* Pour Maven via les properties : `<liquibase.ext.MySQLSyntaxChecker.enable>true</liquibase.ext.MySQLSyntaxChecker.enable>`
+* Pour la ligne de commande : `-Dliquibase.ext.MySQLSyntaxChecker.enable=true`
+
+### Etape 3 : Exécuter Liquibase
+
+* Pour un test JUnit : `liquibase.validate()` ou `liquibase.update(new Contexts());`
+* Pour Maven : `mvn resources:resources liquibase:validate` ou `mvn resources:resources liquibase:update`
+* Pour la ligne de commande : `TODO`
+
+Exemple de résultat :
+
+```text
+liquibase.exception.ValidationFailedException: Validation Failed:
+     11 changes have validation failures
+          ERROR 1059 (42000): Identifier name is too long : 'mysql_identifier_table1_Loremipsumdolorsitametconsecteturadipiscingelit' is more than 64 characters, db-changelog-mysql.xml::test-createTable::demo-liquibase
+          ERROR 1059 (42000): Identifier name is too long : 'mysql_identifier_field1_Loremipsumdolorsitametconsecteturadipiscingelit' is more than 64 characters, db-changelog-mysql.xml::test-TABLE2::demo-liquibase
+          ERROR 1059 (42000): Identifier name is too long : 'mysql_identifier_constraint1_Loremipsumdolorsitametconsecteturadipiscingelit' is more than 64 characters, db-changelog-mysql.xml::test-TABLE3::demo-liquibase
+          ERROR 1059 (42000): Identifier name is too long : 'mysql_identifier_field2_Loremipsumdolorsitametconsecteturadipiscingelit' is more than 64 characters, db-changelog-mysql.xml::test-addColumn::demo-liquibase
+          ERROR 1059 (42000): Identifier name is too long : 'mysql_identifier_constraint2_Loremipsumdolorsitametconsecteturadipiscingelit' is more than 64 characters, db-changelog-mysql.xml::test-addUniqueConstraint::demo-liquibase
+          ERROR 1059 (42000): Identifier name is too long : 'mysql_identifier_vue1_Loremipsumdolorsitametconsecteturadipiscingelit' is more than 64 characters, db-changelog-mysql.xml::test-createView::demo-liquibase
+          ERROR 1059 (42000): Identifier name is too long : 'mysql_identifier_index_Loremipsumdolorsitametconsecteturadipiscingelit' is more than 64 characters, db-changelog-mysql.xml::test-createIndex::demo-liquibase
+          ERROR 1059 (42000): Identifier name is too long : 'mysql_identifier_pk_Loremipsumdolorsitametconsecteturadipiscingelit' is more than 64 characters, db-changelog-mysql.xml::test-addPrimaryKey::demo-liquibase
+          ERROR 1059 (42000): Identifier name is too long : 'mysql_identifier_fk_Loremipsumdolorsitametconsecteturadipiscingelit' is more than 64 characters, db-changelog-mysql.xml::test-addForeignKeyConstraint::demo-liquibase
+          ERROR 1059 (42000): Identifier name is too long : 'mysql_identifier_field3_Loremipsumdolorsitametconsecteturadipiscingelit' is more than 64 characters, db-changelog-mysql.xml::test-renameColumn::demo-liquibase
+          ERROR 1059 (42000): Identifier name is too long : 'mysql_identifier_table2_Loremipsumdolorsitametconsecteturadipiscingelit' is more than 64 characters, db-changelog-mysql.xml::test-renameTable::demo-liquibase
+
+
+	at liquibase.changelog.DatabaseChangeLog.validate(DatabaseChangeLog.java:276)
+```

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+		logicalFilePath="db-changelog-oracle.xml"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!-- test createProcedure
+    <changeSet author="demo-liquibase" id="test-createProcedure">
+        <createProcedure procedureName="UN_NOM_DE_PROCEDURE_BEAUCOUP_TROP_LONG">
+            CREATE OR REPLACE PROCEDURE testHello
+            IS
+            BEGIN
+            null:
+            END;
+        </createProcedure>
+    </changeSet>
+     -->
+    <!-- test createTable vide -->
+<!--    <changeSet author="demo-liquibase" id="test-TABLE-EMPTY">-->
+<!--        <createTable tableName="XXX">-->
+
+<!--        </createTable>-->
+<!--    </changeSet>-->
+    <changeSet author="demo-liquibase" id="test-TABLE1">
+        <createTable tableName="TABLE1">
+            <column name="c1" type="VARCHAR(25)">
+                <constraints nullable="false" />
+            </column>
+            <column name="c2" type="VARCHAR(4)">
+                <constraints nullable="false" notNullConstraintName="demoNotNullConstraintName" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="demo-liquibase" id="test-createTable">
+        <createTable tableName="UN_NOM_DE_TABLE_BEAUCOUP_TROP_LONG">
+            <column name="c1" type="VARCHAR(25)">
+				<constraints nullable="false" />
+			</column>
+            <column name="c2" type="VARCHAR(4)" />
+        </createTable>
+    </changeSet>
+    <changeSet author="demo-liquibase" id="test-TABLE2">
+        <createTable tableName="TABLE2">
+            <column name="un_nom_de_champ_beaucoup_trop_long" type="VARCHAR(25)" />
+            <column name="un_nom_de_champ_ok" type="VARCHAR(20)" />
+        </createTable>
+    </changeSet>
+    <changeSet author="demo-liquibase" id="test-TABLE3">
+        <createTable tableName="TABLE3">
+            <column name="UNIQUE" type="VARCHAR(25)">
+                <constraints nullable="false" notNullConstraintName="UN_NOM_DE_NOTNULL_CONSTRAINT_BEAUCOUP_TROP_LONG" />
+            </column>
+        </createTable>
+    </changeSet>
+    <!-- test addColumn -->
+    <changeSet author="demo-liquibase" id="test-addColumn">
+        <addColumn tableName="TABLE1">
+            <column name="un_nom_de_champ_beaucoup_trop_long2" type="VARCHAR(25)" />
+        </addColumn>
+    </changeSet>
+    <!-- test addUniqueConstraint -->
+    <changeSet author="demo-liquibase" id="test-addUniqueConstraint">
+        <addUniqueConstraint columnNames="c1, c2" constraintName="UN_NOM_DE_UNIQUE_CONTRAINTE_BEAUCOUP_TROP_LONG" tableName="TABLE1" />
+    </changeSet>
+    <!-- test createSequence -->
+    <changeSet author="demo-liquibase" id="test-createSequence-ok">
+        <createSequence sequenceName="SEQUENCE1" />
+    </changeSet>
+    <changeSet author="demo-liquibase" id="test-createSequence">
+        <createSequence sequenceName="UN_NOM_DE_SEQUENCE_BEAUCOUP_TROP_LONG" />
+    </changeSet>
+    <!-- test createView -->
+    <changeSet author="demo-liquibase" id="test-createView-ok">
+        <createView viewName="VUE1" replaceIfExists="false">select c1, c2 from TABLE1 where c1 > 10</createView>
+    </changeSet>
+    <changeSet author="demo-liquibase" id="test-createView">
+        <createView viewName="UN_NOM_DE_VUE_BEAUCOUP_TROP_LONG" replaceIfExists="false">select c1, c2 from TABLE1 where c1 > 10</createView>
+    </changeSet>
+    <!-- test createIndex -->
+    <changeSet author="demo-liquibase" id="test-createIndex">
+        <createIndex indexName="UN_NOM_D_INDEX_BEAUCOUP_TROP_LONG" tableName="TABLE1" unique="true">
+            <column name="c2"/>
+        </createIndex>
+    </changeSet>
+    <!-- test addPrimaryKey -->
+    <changeSet author="demo-liquibase" id="test-addPrimaryKey">
+        <addPrimaryKey tableName="TABLE1" columnNames="c1, c2" constraintName="UN_NOM_DE_CONTRAINTE_BEAUCOUP_TROP_LONG_2" />
+    </changeSet>
+    <!-- test addForeignKeyConstraint -->
+    <changeSet author="demo-liquibase" id="test-addForeignKeyConstraint">
+        <addForeignKeyConstraint baseColumnNames="c2" baseTableName="TABLE1"
+                                 constraintName="UN_NOM_DE_CONTRAINTE_BEAUCOUP_TROP_LONG_4"
+                                 referencedColumnNames="un_nom_de_champ_ok" referencedTableName="TABLE2"/>
+    </changeSet>
+    <!-- test renameColumn -->
+    <changeSet author="demo-liquibase" id="test-renameColumn">
+        <renameColumn newColumnName="un_nom_de_champ_beaucoup_trop_long3" oldColumnName="un_nom_de_champ_ok" tableName="TABLE2" />
+    </changeSet>
+    <!-- test renameSequence : renameSequence is not supported on h2 -->
+    <changeSet author="demo-liquibase" id="test-renameSequence" dbms="oracle">
+        <renameSequence oldSequenceName="SEQUENCE1" newSequenceName="UN_NOM_DE_SEQUENCE_BEAUCOUP_TROP_LONG2" />
+    </changeSet>
+    <!-- test renameView : renameView is not supported on h2 -->
+    <changeSet author="demo-liquibase" id="test-renameView" dbms="oracle">
+        <renameView oldViewName="VUE1" newViewName="UN_NOM_DE_VUE_BEAUCOUP_TROP_LONG2" />
+    </changeSet>
+    <!-- test renameTable -->
+    <changeSet author="demo-liquibase" id="test-renameTable">
+        <renameTable oldTableName="TABLE1" newTableName="UN_NOM_DE_TABLE_BEAUCOUP_TROP_LONG2" />
+    </changeSet>
+</databaseChangeLog>
