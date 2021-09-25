@@ -33,11 +33,11 @@ public class LiquibaseUtils {
 
     public Liquibase buildLiquibase() throws Exception {
         // Open Connection
-        Class.forName(properties.getProperty("driver")).newInstance();
+        Class.forName(properties.getProperty("driver")).getDeclaredConstructor().newInstance();
         connection = DriverManager.getConnection(properties.getProperty("url"), properties.getProperty("username"), properties.getProperty("password"));
         // Build Liquibase
         Liquibase liquibase = new Liquibase(properties.getProperty("changeLogFile"), new ClassLoaderResourceAccessor(), new JdbcConnection(connection));
-        liquibase.getLog().info("Construction OK de l'objet Liquibase");
+        liquibase.getLog().info("Liquibase helper OK");
         return liquibase;
     }
 

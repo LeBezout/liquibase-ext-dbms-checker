@@ -22,7 +22,7 @@ public class MySQLIdentifierLengthLimitChecker implements SQLSyntaxChecker {
 
     @Override
     public String getMessage() {
-        return String.format("ERROR 1059 (42000): Identifier name is too long", identifier);
+        return "ERROR 1059 (42000): Identifier name is too long";
     }
 
     @Override

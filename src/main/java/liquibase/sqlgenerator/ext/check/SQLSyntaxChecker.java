@@ -23,7 +23,7 @@ public interface SQLSyntaxChecker {
      */
     boolean check();
     /**
-     * Effectue la validation et renvoit le message d'erreur dans le cas où la validation échoue.
+     * Effectue la validation et renvoie le message d'erreur dans le cas où la validation échoue.
      * @return Optional message d'erreur complet
      */
     default Optional<String> validate() {

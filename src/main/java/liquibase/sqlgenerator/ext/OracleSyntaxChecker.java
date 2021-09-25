@@ -4,6 +4,7 @@ import liquibase.database.Database;
 import liquibase.database.core.DerbyDatabase;
 import liquibase.database.core.H2Database;
 import liquibase.database.core.HsqlDatabase;
+import liquibase.datatype.LiquibaseDataType;
 import liquibase.exception.ValidationErrors;
 import liquibase.exception.Warnings;
 import liquibase.logging.LogService;
@@ -11,6 +12,8 @@ import liquibase.logging.Logger;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGenerator;
 import liquibase.sqlgenerator.SqlGeneratorChain;
+import liquibase.sqlgenerator.ext.check.ORA00910Checker;
+import liquibase.sqlgenerator.ext.check.ORA00972Checker;
 import liquibase.statement.SqlStatement;
 import liquibase.statement.core.AddColumnStatement;
 import liquibase.statement.core.AddForeignKeyConstraintStatement;
@@ -25,11 +28,12 @@ import liquibase.statement.core.RenameColumnStatement;
 import liquibase.statement.core.RenameSequenceStatement;
 import liquibase.statement.core.RenameTableStatement;
 import liquibase.statement.core.RenameViewStatement;
-import liquibase.sqlgenerator.ext.check.ORA00972Checker;
+
+import java.util.Map;
 
 /**
- * Ajoute des controles supplémentaires de validité pour une cible Oracle.
- * @see {@link <a href="https://liquibase.jira.com/wiki/spaces/CONTRIB/pages/1998878/SqlGenerator">SqlGenerator</a>}
+ * Ajoute des contrôles supplémentaires de validité pour une cible Oracle.
+ * @see <a href="https://liquibase.jira.com/wiki/spaces/CONTRIB/pages/1998878/SqlGenerator">SqlGenerator</a>
  */
 public class OracleSyntaxChecker implements SqlGenerator {
     private static final Logger LOGGER = LogService.getLog(MySQLSyntaxChecker.class);
@@ -63,7 +67,7 @@ public class OracleSyntaxChecker implements SqlGenerator {
         if (sqlStatement instanceof CreateTableStatement) {
             CreateTableStatement statement = (CreateTableStatement)sqlStatement;
             validateIdentifier(errors, statement.getTableName());
-            // Les colonnes
+            // Columns names
             statement.getColumns().forEach(c -> validateIdentifier(errors, c));
             // PK
             if (statement.getPrimaryKeyConstraint() != null) {
@@ -79,6 +83,9 @@ public class OracleSyntaxChecker implements SqlGenerator {
             }
             //TODO statement.getAutoIncrementConstraints()
             //TODO statement.getDefaultValueConstraintNames()
+            // Columns types
+            Map<String, LiquibaseDataType> columnsTypes = statement.getColumnTypes();
+            checkColumnsTypes(errors, statement.getTableName(), columnsTypes);
         } else if (sqlStatement instanceof CreateProcedureStatement) {
             CreateProcedureStatement statement = (CreateProcedureStatement)sqlStatement;
             validateIdentifier(errors, statement.getProcedureName());
@@ -119,7 +126,16 @@ public class OracleSyntaxChecker implements SqlGenerator {
         return errors;
     }
 
-    private void validateIdentifier(ValidationErrors errors, String identifier) {
+    private static void checkColumnsTypes(ValidationErrors errors, String tableName, Map<String, LiquibaseDataType> columnsTypes) {
+        columnsTypes.forEach((c, t) -> checkColumnType(errors, tableName, c, t));
+    }
+    private static void checkColumnType(ValidationErrors errors, String tableName, String column, LiquibaseDataType type) {
+        // ORA00910
+        ORA00910Checker.of(tableName, column, type).validate().ifPresent(errors::addError);
+        // Other identifier checkers here
+    }
+
+    private static void validateIdentifier(ValidationErrors errors, String identifier) {
         if (identifier == null || identifier.isEmpty()) {
             return;
         }
