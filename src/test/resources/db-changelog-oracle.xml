@@ -46,6 +46,7 @@
 			</column>
             <column name="c2_2" type="VARCHAR(4)" />
             <column name="c3_2" type="NUMBER(4, 2)" />
+            <column name="c4_2" type="VARCHAR2(20)" />
         </createTable>
     </changeSet>
     <changeSet author="demo-liquibase" id="test-TABLE2">

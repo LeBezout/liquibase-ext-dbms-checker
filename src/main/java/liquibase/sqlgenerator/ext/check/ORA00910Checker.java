@@ -42,24 +42,28 @@ public class ORA00910Checker implements SQLSyntaxChecker {
     }
 
     private int getTypeMaxLength() {
-        if (isChar(columnType.getName())) {
-            return CHAR_MAX_LENGTH;
+        switch (columnType.getName()) {
+            case "char" :
+            case "nchar" :
+                return CHAR_MAX_LENGTH;
+            case "varchar" :
+            case "nvarchar" :
+                return VARCHAR_MAX_LENGTH;
+            default : return 0;
         }
-        if (isVarChar(columnType.getName())) {
-            return VARCHAR_MAX_LENGTH;
-        }
-        return 0;
     }
 
     @Override
     public boolean check() {
-        if (isChar(columnType.getName())) {
-            return checkLength(columnType, CHAR_MAX_LENGTH);
+        switch (columnType.getName()) {
+            case "char" :
+            case "nchar" :
+                return checkLength(columnType, CHAR_MAX_LENGTH);
+            case "varchar" :
+            case "nvarchar" :
+                return checkLength(columnType, VARCHAR_MAX_LENGTH);
+            default : return true;
         }
-        if (isVarChar(columnType.getName())) {
-            return checkLength(columnType, VARCHAR_MAX_LENGTH);
-        }
-        return true;
     }
 
     private static boolean checkLength(final LiquibaseDataType columnType, int maxLength) {
@@ -69,22 +73,5 @@ public class ORA00910Checker implements SQLSyntaxChecker {
             return length <= maxLength;
         }
         return true;
-    }
-
-    private static boolean isChar(String name) {
-        switch (name) {
-            case "char" :
-            case "nchar" :
-                return true;
-            default : return false;
-        }
-    }
-    private static boolean isVarChar(String name) {
-        switch (name) {
-            case "varchar" :
-            case "nvarchar" :
-                return true;
-            default : return false;
-        }
     }
 }

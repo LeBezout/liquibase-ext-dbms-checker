@@ -137,7 +137,7 @@ Pour une cible MySQL :
 
 * Pour un test JUnit : `liquibase.validate()` ou `liquibase.update(new Contexts());`
 * Pour Maven : `mvn resources:resources liquibase:validate` ou `mvn resources:resources liquibase:update`
-* Pour la ligne de commande : `TODO`
+* Pour la ligne de commande : `JAVA_OPTS="-Dliquibase.ext.MySQLSyntaxChecker.enable=true" liquibase update`
 
 Exemple de résultat :
 
