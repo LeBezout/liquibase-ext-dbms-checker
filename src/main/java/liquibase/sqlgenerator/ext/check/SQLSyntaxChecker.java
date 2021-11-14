@@ -3,7 +3,7 @@ package liquibase.sqlgenerator.ext.check;
 import java.util.Optional;
 
 /**
- * Décrit le comportant de vérification de syntaxe SQL.
+ * Décrit le comportement de vérification de syntaxe SQL.
  */
 public interface SQLSyntaxChecker {
     /**
@@ -23,7 +23,7 @@ public interface SQLSyntaxChecker {
      */
     boolean check();
     /**
-     * Effectue la validation et renvoit le message d'erreur dans le cas où la validation échoue.
+     * Effectue la validation et renvoie le message d'erreur dans le cas où la validation échoue.
      * @return Optional message d'erreur complet
      */
     default Optional<String> validate() {
