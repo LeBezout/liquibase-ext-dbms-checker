@@ -27,20 +27,26 @@
 <!--    </changeSet>-->
     <changeSet author="demo-liquibase" id="test-TABLE1">
         <createTable tableName="TABLE1">
-            <column name="c1" type="VARCHAR(25)">
+            <column name="c1_1" type="VARCHAR2(25)">
                 <constraints nullable="false" />
             </column>
-            <column name="c2" type="VARCHAR(4)">
+            <column name="c2_1" type="VARCHAR(4)">
                 <constraints nullable="false" notNullConstraintName="demoNotNullConstraintName" />
             </column>
+            <column name="c3_1" type="CHAR(2001)" />
+            <column name="c4_1" type="NCHAR(4001)" />
+            <column name="c5_1" type="NVARCHAR2(4001)" />
+            <column name="c6_1" type="VARCHAR2(5000)" />
         </createTable>
     </changeSet>
     <changeSet author="demo-liquibase" id="test-createTable">
         <createTable tableName="UN_NOM_DE_TABLE_BEAUCOUP_TROP_LONG">
-            <column name="c1" type="VARCHAR(25)">
+            <column name="c1_2" type="VARCHAR(25)">
 				<constraints nullable="false" />
 			</column>
-            <column name="c2" type="VARCHAR(4)" />
+            <column name="c2_2" type="VARCHAR(4)" />
+            <column name="c3_2" type="NUMBER(4, 2)" />
+            <column name="c4_2" type="VARCHAR2(20)" />
         </createTable>
     </changeSet>
     <changeSet author="demo-liquibase" id="test-TABLE2">

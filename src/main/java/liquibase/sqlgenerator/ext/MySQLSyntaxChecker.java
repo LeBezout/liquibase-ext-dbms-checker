@@ -63,7 +63,7 @@ public class MySQLSyntaxChecker implements SqlGenerator {
         if (sqlStatement instanceof CreateTableStatement) {
             CreateTableStatement statement = (CreateTableStatement)sqlStatement;
             validateIdentifier(errors, statement.getTableName());
-            // Les colonnes
+            // Columns names
             statement.getColumns().forEach(c -> validateIdentifier(errors, c));
             // PK
             if (statement.getPrimaryKeyConstraint() != null) {
@@ -117,7 +117,7 @@ public class MySQLSyntaxChecker implements SqlGenerator {
         return errors;
     }
 
-    private void validateIdentifier(ValidationErrors errors, String identifier) {
+    private static void validateIdentifier(ValidationErrors errors, String identifier) {
         if (identifier == null || identifier.isEmpty()) {
             return;
         }

@@ -80,10 +80,25 @@ But de la règle :
 
 > Veillez à ce que les noms d'objets Oracle comportent au maximum 30 caractères.
 
+Cause: An identifier with more than 30 characters was specified.
+
+Action: Specify at most 30 characters.
+
 Références :
 
 * <https://kb.tableau.com/articles/issue/error-ora-00972?lang=fr-fr>
 * <http://www.dba-oracle.com/sf_ora_00972_identifier_is_too_long.htm>
+
+
+#### ORA-00910: specified length too long for its datatype
+
+But de la règle :
+
+> Veillez à ce que la taille des types CHAR/VARCHAR ne dépasse pas les limites.
+
+Cause: for datatypes CHAR and RAW, the length specified was > 2000; otherwise, the length specified was > 4000.
+
+Action: use a shorter length or switch to a datatype permitting a longer length such as a VARCHAR2, LONG CHAR, or LONG RAW
 
 ### Cible MySQL
 
@@ -122,7 +137,7 @@ Pour une cible MySQL :
 
 * Pour un test JUnit : `liquibase.validate()` ou `liquibase.update(new Contexts());`
 * Pour Maven : `mvn resources:resources liquibase:validate` ou `mvn resources:resources liquibase:update`
-* Pour la ligne de commande : `TODO`
+* Pour la ligne de commande : `JAVA_OPTS="-Dliquibase.ext.MySQLSyntaxChecker.enable=true" liquibase update`
 
 Exemple de résultat :
 
