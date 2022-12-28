@@ -4,14 +4,10 @@ import liquibase.Scope;
 import liquibase.database.Database;
 import liquibase.datatype.LiquibaseDataType;
 import liquibase.exception.ValidationErrors;
-import liquibase.exception.Warnings;
-import liquibase.logging.Logger;
-import liquibase.sql.Sql;
-import liquibase.sqlgenerator.SqlGenerator;
-import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.ext.dbms.check.oracle.ORA00910Checker;
 import liquibase.ext.dbms.check.oracle.ORA00972Checker;
-import liquibase.ext.dbms.utils.SyntaxCheckerUtils;
+import liquibase.logging.Logger;
+import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.statement.SqlStatement;
 import liquibase.statement.core.AddColumnStatement;
 import liquibase.statement.core.AddForeignKeyConstraintStatement;
@@ -33,39 +29,26 @@ import java.util.Map;
  * Ajoute des contrôles supplémentaires de validité pour une cible Oracle.
  * @see <a href="https://liquibase.jira.com/wiki/spaces/CONTRIB/pages/1998878/SqlGenerator">SqlGenerator</a>
  */
-public class OracleSyntaxChecker implements SqlGenerator {
+public class OracleSyntaxChecker extends AbstractDbmsSyntaxChecker {
 
     public OracleSyntaxChecker() {
-        final boolean isEnable = Boolean.getBoolean("liquibase.ext.OracleSyntaxChecker.enable");
-        Scope.getCurrentScope().getLog(this.getClass()).info("Registering OracleSyntaxChecker instance, enable : " + isEnable);
+        Scope.getCurrentScope().getLog(this.getClass()).info("Registering OracleSyntaxChecker instance, enable : " + isEnabled());
+    }
+
+    @Override
+    protected String activationSystemPropertyKey() {
+        return "liquibase.ext.dbms.OracleSyntaxChecker.enable";
     }
 
     @Override
     public int getPriority() {
-        return 10;
-    }
-
-    @Override
-    public boolean supports(SqlStatement sqlStatement, Database database) {
-        return SyntaxCheckerUtils.supportsDatabase(database)
-            && SyntaxCheckerUtils.supportsSqlStatement(sqlStatement);
-    }
-
-    @Override
-    public boolean generateStatementsIsVolatile(Database database) {
-        return false;
-    }
-
-    @Override
-    public boolean generateRollbackStatementsIsVolatile(Database database) {
-        return false;
+        return super.getPriority() + 2;
     }
 
     @Override
     public ValidationErrors validate(SqlStatement sqlStatement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         ValidationErrors errors = sqlGeneratorChain.validate(sqlStatement, database);
-        final boolean isEnable = Boolean.getBoolean("liquibase.ext.OracleSyntaxChecker.enable");
-        if (isEnable) {
+        if (isEnabled()) {
             Logger log = Scope.getCurrentScope().getLog(this.getClass());
             log.info("Validating SqlStatement for Oracle target: " + sqlStatement.getClass().getSimpleName() + " (Database=" + database + ")");
             // validate
@@ -148,15 +131,5 @@ public class OracleSyntaxChecker implements SqlGenerator {
         // ORA00972
         ORA00972Checker.of(identifier).validate().ifPresent(errors::addError);
         // Other identifier checkers here
-    }
-
-    @Override
-    public Warnings warn(SqlStatement sqlStatement, Database database, SqlGeneratorChain sqlGeneratorChain) {
-        return sqlGeneratorChain.warn(sqlStatement, database);
-    }
-
-    @Override
-    public Sql[] generateSql(SqlStatement sqlStatement, Database database, SqlGeneratorChain sqlGeneratorChain) {
-        return sqlGeneratorChain.generateSql(sqlStatement, database);
     }
 }

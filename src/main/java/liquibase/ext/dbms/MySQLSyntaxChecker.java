@@ -3,14 +3,10 @@ package liquibase.ext.dbms;
 import liquibase.Scope;
 import liquibase.database.Database;
 import liquibase.exception.ValidationErrors;
-import liquibase.exception.Warnings;
-import liquibase.logging.Logger;
-import liquibase.sql.Sql;
-import liquibase.sqlgenerator.SqlGenerator;
-import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.ext.dbms.check.mysql.MySQLIdentifierLengthLimitChecker;
 import liquibase.ext.dbms.check.mysql.MySQLRequiredColumnDataTypeChecker;
-import liquibase.ext.dbms.utils.SyntaxCheckerUtils;
+import liquibase.logging.Logger;
+import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.statement.SqlStatement;
 import liquibase.statement.core.AddColumnStatement;
 import liquibase.statement.core.AddForeignKeyConstraintStatement;
@@ -31,38 +27,25 @@ import liquibase.statement.core.SetColumnRemarksStatement;
  * Ajoute des controles supplémentaires de validité pour une cible MySQL.
  * @see <a href="https://liquibase.jira.com/wiki/spaces/CONTRIB/pages/1998878/SqlGenerator">SqlGenerator</a>
  */
-public class MySQLSyntaxChecker implements SqlGenerator {
+public class MySQLSyntaxChecker extends AbstractDbmsSyntaxChecker {
     public MySQLSyntaxChecker() {
-        final boolean isEnable = Boolean.getBoolean("liquibase.ext.MySQLSyntaxChecker.enable");
-        Scope.getCurrentScope().getLog(this.getClass()).info("Registering MySQLSyntaxChecker instance, enable : " + isEnable);
+        Scope.getCurrentScope().getLog(this.getClass()).info("Registering MySQLSyntaxChecker instance, enable : " + isEnabled());
+    }
+
+    @Override
+    protected String activationSystemPropertyKey() {
+        return "liquibase.ext.dbms.MySQLSyntaxChecker.enable";
     }
 
     @Override
     public int getPriority() {
-        return 10;
-    }
-
-    @Override
-    public boolean supports(SqlStatement sqlStatement, Database database) {
-        return SyntaxCheckerUtils.supportsDatabase(database)
-            && SyntaxCheckerUtils.supportsSqlStatement(sqlStatement);
-    }
-
-    @Override
-    public boolean generateStatementsIsVolatile(Database database) {
-        return false;
-    }
-
-    @Override
-    public boolean generateRollbackStatementsIsVolatile(Database database) {
-        return false;
+        return super.getPriority() + 1;
     }
 
     @Override
     public ValidationErrors validate(SqlStatement sqlStatement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         ValidationErrors errors = sqlGeneratorChain.validate(sqlStatement, database);
-        final boolean isEnable = Boolean.getBoolean("liquibase.ext.MySQLSyntaxChecker.enable");
-        if (isEnable) {
+        if (isEnabled()) {
             Logger log = Scope.getCurrentScope().getLog(this.getClass());
             log.info("Validating SqlStatement for MySQL target: " + sqlStatement.getClass().getSimpleName() + " (Database=" + database + ")");
             // validate
@@ -137,15 +120,5 @@ public class MySQLSyntaxChecker implements SqlGenerator {
         // Identifier Length
         MySQLIdentifierLengthLimitChecker.of(identifier).validate().ifPresent(errors::addError);
         // Other identifier checkers here
-    }
-
-    @Override
-    public Warnings warn(SqlStatement sqlStatement, Database database, SqlGeneratorChain sqlGeneratorChain) {
-        return sqlGeneratorChain.warn(sqlStatement, database);
-    }
-
-    @Override
-    public Sql[] generateSql(SqlStatement sqlStatement, Database database, SqlGeneratorChain sqlGeneratorChain) {
-        return sqlGeneratorChain.generateSql(sqlStatement, database);
     }
 }

@@ -128,28 +128,28 @@ Références :
 
 ### Etape 1 : Ajouter l'extension au classpath
 
-* Pour Maven ajouter la dépendance `com.github.lebezout:liquibase-ext-dbms-checker:1.0.0`
-* Pour la ligne de commande ajouter `liquibase-ext-dbms-checker.jar`
+* Pour Maven ajouter la dépendance `com.github.lebezout:liquibase-ext-dbms-checker:1.1.0`
+* Pour la ligne de commande ajouter `liquibase-ext-dbms-checker-1.1.0.jar`
 
 ### Etape 2 : Activer les contrôles de syntaxe
 
 Pour une cible Oracle :
 
-* Pour un test JUnit : `System.setProperty("liquibase.ext.OracleSyntaxChecker.enable", "true");`
-* Pour Maven via les properties : `<liquibase.ext.OracleSyntaxChecker.enable>true</liquibase.ext.OracleSyntaxChecker.enable>`
-* Pour la ligne de commande : `-Dliquibase.ext.OracleSyntaxChecker.enable=true`
+* Pour un test JUnit : `System.setProperty("liquibase.ext.dbms.OracleSyntaxChecker.enable", "true");`
+* Pour Maven via les properties : `<liquibase.ext.dbms.OracleSyntaxChecker.enable>true</liquibase.ext.dbms.OracleSyntaxChecker.enable>`
+* Pour la ligne de commande : `-Dliquibase.ext.dbms.OracleSyntaxChecker.enable=true`
 
 Pour une cible MySQL :
 
-* Pour un test JUnit : `System.setProperty("liquibase.ext.MySQLSyntaxChecker.enable", "true");`
-* Pour Maven via les properties : `<liquibase.ext.MySQLSyntaxChecker.enable>true</liquibase.ext.MySQLSyntaxChecker.enable>`
-* Pour la ligne de commande : `-Dliquibase.ext.MySQLSyntaxChecker.enable=true`
+* Pour un test JUnit : `System.setProperty("liquibase.ext.dbms.MySQLSyntaxChecker.enable", "true");`
+* Pour Maven via les properties : `<liquibase.ext.Mdbms.ySQLSyntaxChecker.enable>true</liquibase.ext.dbms.MySQLSyntaxChecker.enable>`
+* Pour la ligne de commande : `-Dliquibase.ext.dbms.MySQLSyntaxChecker.enable=true`
 
 ### Etape 3 : Exécuter Liquibase
 
 * Pour un test JUnit : `liquibase.validate()` ou `liquibase.update(new Contexts());`
 * Pour Maven : `mvn resources:resources liquibase:validate` ou `mvn resources:resources liquibase:update`
-* Pour la ligne de commande : `JAVA_OPTS="-Dliquibase.ext.MySQLSyntaxChecker.enable=true" liquibase update`
+* Pour la ligne de commande : `JAVA_OPTS="-Dliquibase.ext.dbms.MySQLSyntaxChecker.enable=true" liquibase update`
 
 Exemple de résultat :
 

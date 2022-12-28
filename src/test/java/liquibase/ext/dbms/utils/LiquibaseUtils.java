@@ -39,8 +39,8 @@ public class LiquibaseUtils {
         openConnection();
         Liquibase liquibase = new Liquibase(properties.getProperty("changeLogFile"), new ClassLoaderResourceAccessor(), new JdbcConnection(connection));
         liquibase.getLog().info("Liquibase helper OK");
-        liquibase.getLog().info("OracleSyntaxChecker enable: " + System.getProperty("liquibase.ext.OracleSyntaxChecker.enable"));
-        liquibase.getLog().info("MySQLSyntaxChecker  enable: " + System.getProperty("liquibase.ext.MySQLSyntaxChecker.enable"));
+        liquibase.getLog().info("OracleSyntaxChecker enable: " + System.getProperty("liquibase.ext.dbms.OracleSyntaxChecker.enable"));
+        liquibase.getLog().info("MySQLSyntaxChecker  enable: " + System.getProperty("liquibase.ext.dbms.MySQLSyntaxChecker.enable"));
         return liquibase;
     }
 
@@ -56,15 +56,15 @@ public class LiquibaseUtils {
     }
 
     public void enableMySQLSyntaxChecker() {
-        System.setProperty("liquibase.ext.MySQLSyntaxChecker.enable", "true");
+        System.setProperty("liquibase.ext.dbms.MySQLSyntaxChecker.enable", "true");
     }
     public void disableMySQLSyntaxChecker() {
-        System.clearProperty("liquibase.ext.MySQLSyntaxChecker.enable");
+        System.clearProperty("liquibase.ext.dbms.MySQLSyntaxChecker.enable");
     }
     public void enableOracleSyntaxChecker() {
-        System.setProperty("liquibase.ext.OracleSyntaxChecker.enable", "true");
+        System.setProperty("liquibase.ext.dbms.OracleSyntaxChecker.enable", "true");
     }
     public void disableOracleSyntaxChecker() {
-        System.clearProperty("liquibase.ext.OracleSyntaxChecker.enable");
+        System.clearProperty("liquibase.ext.dbms.OracleSyntaxChecker.enable");
     }
 }
