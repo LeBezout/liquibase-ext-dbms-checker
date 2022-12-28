@@ -1,4 +1,4 @@
-package liquibase.sqlgenerator.ext.check;
+package liquibase.ext.dbms.check.mysql;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

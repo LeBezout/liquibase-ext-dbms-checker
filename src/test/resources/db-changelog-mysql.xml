@@ -5,7 +5,7 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <changeSet author="demo-liquibase" id="test-createTable-DEMO">
@@ -95,5 +95,20 @@
     <!-- test renameTable -->
     <changeSet author="demo-liquibase" id="test-renameTable">
         <renameTable oldTableName="TABLE1" newTableName="mysql_identifier_table2_Loremipsumdolorsitametconsecteturadipiscingelit" />
+    </changeSet>
+    <!-- test columnDataType is required for setColumnRemarks on mysql -->
+    <changeSet author="demo-liquibase"  id="test-setTableRemarks">
+        <setColumnRemarks tableName="TABLE_DEMO" remarks="sample remark" columnName="FIELD_1" /><!-- no columnDataType -->
+    </changeSet>
+    <!-- test dropColumn rollback -->
+    <changeSet author="demo-liquibase"  id="test-dropColumn-with-rollback">
+        <dropColumn tableName="TABLE_DEMO" columnName="FIELD_1" />
+        <rollback>
+            <addColumn tableName="TABLE_DEMO">
+                <column name="FIELD_1" type="VARCHAR(25)" />
+            </addColumn>
+            <setColumnRemarks tableName="TABLE_DEMO" remarks="rollback remark" columnName="FIELD_1" /> <!-- no columnDataType -->
+            <renameColumn tableName="TABLE_DEMO" oldColumnName="FIELD_1" newColumnName="FIELD_11" /><!-- no columnDataType -->
+        </rollback>
     </changeSet>
 </databaseChangeLog>

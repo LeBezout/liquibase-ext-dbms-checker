@@ -1,6 +1,5 @@
-package liquibase.sqlgenerator.ext.check;
+package liquibase.ext.dbms.check;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,11 +27,11 @@ class SQLSyntaxCheckerTest {
 
     @Test
     void validate_should_return_optional_empty() {
-        Assertions.assertFalse(new DemoSQLSyntaxChecker(true).validate().isPresent());
+        assertFalse(new DemoSQLSyntaxChecker(true).validate().isPresent());
     }
 
     @Test
     void validate_should_return_optional_of_string() {
-        Assertions.assertEquals("message : cause", new DemoSQLSyntaxChecker(false).validate().get());
+        assertEquals("message : cause", new DemoSQLSyntaxChecker(false).validate().get());
     }
 }

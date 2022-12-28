@@ -1,4 +1,6 @@
-package liquibase.sqlgenerator.ext.check;
+package liquibase.ext.dbms.check.oracle;
+
+import liquibase.ext.dbms.check.SQLSyntaxChecker;
 
 /**
  * Controle que les noms d'objets Oracle comportent moins de trente caractères.

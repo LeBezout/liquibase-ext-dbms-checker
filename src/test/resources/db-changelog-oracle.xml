@@ -5,7 +5,7 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <!-- test createProcedure
@@ -52,7 +52,9 @@
     <changeSet author="demo-liquibase" id="test-TABLE2">
         <createTable tableName="TABLE2">
             <column name="un_nom_de_champ_beaucoup_trop_long" type="VARCHAR(25)" />
-            <column name="un_nom_de_champ_ok" type="VARCHAR(20)" />
+            <column name="un_nom_de_champ_ok" type="VARCHAR(20)" >
+                <constraints primaryKey="true"/>
+            </column>
         </createTable>
     </changeSet>
     <changeSet author="demo-liquibase" id="test-TABLE3">
@@ -70,7 +72,7 @@
     </changeSet>
     <!-- test addUniqueConstraint -->
     <changeSet author="demo-liquibase" id="test-addUniqueConstraint">
-        <addUniqueConstraint columnNames="c1, c2" constraintName="UN_NOM_DE_UNIQUE_CONTRAINTE_BEAUCOUP_TROP_LONG" tableName="TABLE1" />
+        <addUniqueConstraint columnNames="c1_1, c2_1" constraintName="UN_NOM_DE_UNIQUE_CONTRAINTE_BEAUCOUP_TROP_LONG" tableName="TABLE1" />
     </changeSet>
     <!-- test createSequence -->
     <changeSet author="demo-liquibase" id="test-createSequence-ok">
@@ -81,24 +83,24 @@
     </changeSet>
     <!-- test createView -->
     <changeSet author="demo-liquibase" id="test-createView-ok">
-        <createView viewName="VUE1" replaceIfExists="false">select c1, c2 from TABLE1 where c1 > 10</createView>
+        <createView viewName="VUE1" replaceIfExists="false">select c1_1, c2_1 from TABLE1 where c1_1 > 10</createView>
     </changeSet>
     <changeSet author="demo-liquibase" id="test-createView">
-        <createView viewName="UN_NOM_DE_VUE_BEAUCOUP_TROP_LONG" replaceIfExists="false">select c1, c2 from TABLE1 where c1 > 10</createView>
+        <createView viewName="UN_NOM_DE_VUE_BEAUCOUP_TROP_LONG" replaceIfExists="false">select c1_1, c2_1 from TABLE1 where c1_1 > 10</createView>
     </changeSet>
     <!-- test createIndex -->
     <changeSet author="demo-liquibase" id="test-createIndex">
         <createIndex indexName="UN_NOM_D_INDEX_BEAUCOUP_TROP_LONG" tableName="TABLE1" unique="true">
-            <column name="c2"/>
+            <column name="c2_1"/>
         </createIndex>
     </changeSet>
     <!-- test addPrimaryKey -->
     <changeSet author="demo-liquibase" id="test-addPrimaryKey">
-        <addPrimaryKey tableName="TABLE1" columnNames="c1, c2" constraintName="UN_NOM_DE_CONTRAINTE_BEAUCOUP_TROP_LONG_2" />
+        <addPrimaryKey tableName="TABLE1" columnNames="c1_1, c2_1" constraintName="UN_NOM_DE_CONTRAINTE_BEAUCOUP_TROP_LONG_2" />
     </changeSet>
     <!-- test addForeignKeyConstraint -->
     <changeSet author="demo-liquibase" id="test-addForeignKeyConstraint">
-        <addForeignKeyConstraint baseColumnNames="c2" baseTableName="TABLE1"
+        <addForeignKeyConstraint baseColumnNames="c2_1" baseTableName="TABLE1"
                                  constraintName="UN_NOM_DE_CONTRAINTE_BEAUCOUP_TROP_LONG_4"
                                  referencedColumnNames="un_nom_de_champ_ok" referencedTableName="TABLE2"/>
     </changeSet>

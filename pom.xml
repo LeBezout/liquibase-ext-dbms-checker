@@ -6,7 +6,7 @@
 	<groupId>com.github.lebezout</groupId>
 	<artifactId>liquibase-ext-dbms-checker</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.1.0</version>
 	<description>Composant proposant des validations supplémentaires pour les fichiers changelogs pour certains DBMS cibles.</description>
 
 	<properties>
@@ -29,7 +29,7 @@
 			<dependency>
 				<groupId>org.junit</groupId>
 				<artifactId>junit-bom</artifactId>
-				<version>5.4.2</version>
+				<version>5.9.0</version>
                 <type>pom</type>
                 <scope>import</scope>
 			</dependency>
@@ -38,16 +38,20 @@
 				<artifactId>logback-classic</artifactId>
 				<version>1.2.3</version>
 			</dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jul-to-slf4j</artifactId>
+                <version>1.7.25</version>
+            </dependency>
 			<dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
-				<version>3.8.9</version>
+				<version>4.18.0</version>
 			</dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-                <version>1.4.200</version>
-                <scope>test</scope>
+                <version>2.1.214</version>
             </dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -65,11 +69,16 @@
 			<scope>test</scope>
 		</dependency>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
-		<!-- SCOPE COMPIL : Liquibase API (sans la compatibilité yaml) -->
+		<!-- Liquibase API (sans la compatibilité yaml) -->
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
@@ -79,10 +88,11 @@
 					<artifactId>snakeyaml</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>ch.qos.logback</groupId>
-					<artifactId>logback-classic</artifactId>
+                    <groupId>com.opencsv</groupId>
+                    <artifactId>opencsv</artifactId>
 				</exclusion>
 			</exclusions>
+            <scope>provided</scope>
         </dependency>
 	</dependencies>
 

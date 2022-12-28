@@ -1,9 +1,11 @@
-package liquibase.sqlgenerator.ext.check;
+package liquibase.ext.dbms.check.mysql;
+
+import liquibase.ext.dbms.check.SQLSyntaxChecker;
 
 /**
  * Controle que les noms d'objets MySQL comportent moins de 64 caractères.
  * Most identifiers have a maximum length of 64 characters. The maximum length for aliases is 256 characters.
- * @øee {@link <a href="https://dev.mysql.com/doc/refman/8.0/en/identifier-length.html">Identifier Length</a>}
+ * @see {@link <a href="https://dev.mysql.com/doc/refman/8.0/en/identifier-length.html">Identifier Length</a>}
  */
 public class MySQLIdentifierLengthLimitChecker implements SQLSyntaxChecker {
     private final String identifier;

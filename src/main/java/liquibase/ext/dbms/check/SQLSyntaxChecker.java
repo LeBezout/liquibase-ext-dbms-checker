@@ -1,4 +1,4 @@
-package liquibase.sqlgenerator.ext.check;
+package liquibase.ext.dbms.check;
 
 import java.util.Optional;
 

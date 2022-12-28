@@ -8,7 +8,7 @@ Le but de ce composant est de rajouter des contrôles de validité des fichiers 
 
 Généralement (et c'est une bonne pratique) on valide les fichiers changelogs Liquibase avec une base de test : H2, HSQLDB ou Derby mais malgré les modes de compatibilité vers les systèmes cibles, tels qu'Oracle ou MySQL il reste encore des règles internes aux systèmes cibles qui ne sont pas détectées.
 
-Le but de ce composant est de pouvoir en détecter le plus possible.
+Le but de ce composant est de pouvoir en détecter le plus possible, le plus tôt possible (avant le 1er déploiement).
 
 :information_source: **Le cas d'usage typique est via l'intégration continue pour détecter les problèmes au plus tôt (donc des gains de temps) sans attendre un déploiement sur un environnement cible.**
 
@@ -20,7 +20,8 @@ Le but de ce composant est de pouvoir en détecter le plus possible.
 
 ## Principes d'extension de Liquibase
 
-:link: [Liquibase Extensions - Overview](https://liquibase.jira.com/wiki/spaces/CONTRIB/pages/2424879/Overview)
+* [Liquibase Extensions extend Liquibase database support and capabilities](https://www.liquibase.org/extensions)
+* OLD : [Liquibase Extensions - Overview](https://liquibase.jira.com/wiki/spaces/CONTRIB/pages/2424879/Overview)
 
 ### Généralités
 
@@ -46,7 +47,7 @@ Différents points d'accroches y sont décrits :
   * **Non adapté au besoin**
 * Precondition
   * _liquibase.precondition.Precondition implementations allow you to run validation and checks against your database before running a changelog as a whole_
-  * **Non adapté au besoin, le but n'est pas de rajouter de pré conditions dans un changelog mais de rajouter des contrôles au _runtime_**
+  * **Non adapté au besoin, le but n'est pas de rajouter de pré-conditions dans un changelog mais de rajouter des contrôles au _runtime_**
 * SqlGenerator
   * _liquibase.sqlgenerator.SqlGenerator implementations convert database-independent SqlStatement classes into database-specific SQL._
   * Propose 2 méthodes intéressantes :
@@ -74,11 +75,11 @@ Ce qui implique les contraintes suivantes :
 
 ### Cible Oracle
 
-#### ORA-00972: identifier is too long
+#### ORA-00972: identifier is too long (since 1.0.0)
 
 But de la règle :
 
-> Veillez à ce que les noms d'objets Oracle comportent au maximum 30 caractères.
+> Veiller à ce que les noms d'objets Oracle comportent au maximum 30 caractères.
 
 Cause: An identifier with more than 30 characters was specified.
 
@@ -90,11 +91,11 @@ Références :
 * <http://www.dba-oracle.com/sf_ora_00972_identifier_is_too_long.htm>
 
 
-#### ORA-00910: specified length too long for its datatype
+#### ORA-00910: specified length too long for its datatype (since 1.0.0)
 
 But de la règle :
 
-> Veillez à ce que la taille des types CHAR/VARCHAR ne dépasse pas les limites.
+> Veiller à ce que la taille des types CHAR/VARCHAR ne dépasse pas les limites.
 
 Cause: for datatypes CHAR and RAW, the length specified was > 2000; otherwise, the length specified was > 4000.
 
@@ -102,15 +103,26 @@ Action: use a shorter length or switch to a datatype permitting a longer length 
 
 ### Cible MySQL
 
-#### Identifier name is too long
+#### Identifier name is too long (since 1.0.0)
 
 But de la règle :
 
-> Veillez à ce que les noms d'objets MySQL comportent au maximum 64 caractères.
+> Veiller à ce que les noms d'objets MySQL comportent au maximum 64 caractères.
 
 Références :
 
 * <https://dev.mysql.com/doc/refman/8.0/en/identifier-length.html>
+
+#### columnDataType is required for setColumnRemarks/renameColumn on mysql (since 1.1.0)
+
+But de la règle :
+
+> Veiller à ce que l'attribut `columnDataType` (à priori inutile) soit spécifié sur le _change type_ `setColumnRemarks` dans le cas d'une cible MySQL.
+
+Références :
+
+* <https://docs.liquibase.com/change-types/set-column-remarks.html>
+* <https://docs.liquibase.com/change-types/rename-column.html>
 
 ## Exemple d'utilisation
 

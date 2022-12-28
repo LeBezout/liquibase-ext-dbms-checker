@@ -1,6 +1,7 @@
-package liquibase.sqlgenerator.ext.check;
+package liquibase.ext.dbms.check.oracle;
 
 import liquibase.datatype.LiquibaseDataType;
+import liquibase.ext.dbms.check.SQLSyntaxChecker;
 
 /**
  * Contrôle que les types d'objets caractères ne dépassent la taille limite.
