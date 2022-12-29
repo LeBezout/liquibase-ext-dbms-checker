@@ -8,6 +8,10 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
+    <changeSet author="demo-liquibase" id="tag-init">
+        <tagDatabase tag="V0" />
+    </changeSet>
+
     <changeSet author="demo-liquibase" id="test-createTable-DEMO">
         <createTable tableName="TABLE_DEMO">
             <column name="FIELD_1" type="VARCHAR(25)" />
@@ -109,6 +113,17 @@
             </addColumn>
             <setColumnRemarks tableName="TABLE_DEMO" remarks="rollback remark" columnName="FIELD_1" /> <!-- no columnDataType -->
             <renameColumn tableName="TABLE_DEMO" oldColumnName="FIELD_1" newColumnName="FIELD_11" /><!-- no columnDataType -->
+        </rollback>
+    </changeSet>
+    <!-- test dropTable rollback -->
+    <changeSet author="demo-liquibase"  id="test-droptable-with-rollback">
+        <dropTable tableName="TABLE_DEMO" />
+        <rollback>
+            <createTable tableName="TABLE_DEMO">
+                <column name="FIELD_1" type="VARCHAR(25)">
+                    <constraints nullable="false" notNullConstraintName="mysql_identifier_constraint_FIELD_1_Loremipsumdolorsitametconsecteturadipiscingelit" />
+                </column>
+            </createTable>
         </rollback>
     </changeSet>
 </databaseChangeLog>

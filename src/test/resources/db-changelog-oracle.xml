@@ -8,6 +8,10 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
+    <changeSet author="demo-liquibase" id="tag-init">
+        <tagDatabase tag="V0" />
+    </changeSet>
+
     <!-- test createProcedure
     <changeSet author="demo-liquibase" id="test-createProcedure">
         <createProcedure procedureName="UN_NOM_DE_PROCEDURE_BEAUCOUP_TROP_LONG">
